@@ -28,7 +28,8 @@ public class YouTubeVideoInfoRetriever
         val targetUrl = "$URL_YOUTUBE_GET_VIDEO_INFO$videoId&el=info&ps=default&eurl=&gl=US&hl=en"
         val client = SimpleHttpClient()
         val output =
-            client.execute(targetUrl, SimpleHttpClient.HTTP_GET, SimpleHttpClient.DEFAULT_TIMEOUT)
+            client.execute(targetUrl, client.ENCODING_UTF_8.toString(), client.HTTP_GET.toInt())
+
         parse(output)
     }
 
@@ -45,8 +46,9 @@ public class YouTubeVideoInfoRetriever
     private fun parse(data: String) {
         val splits = data.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         var kvpStr = ""
+        val client = SimpleHttpClient()
 
-        if (splits.size < 1) {
+        if (splits.isEmpty()) {
             return
         }
 
@@ -57,8 +59,8 @@ public class YouTubeVideoInfoRetriever
 
             try {
                 // Data is encoded multiple times
-                kvpStr = URLDecoder.decode(kvpStr, SimpleHttpClient.ENCODING_UTF_8)
-                kvpStr = URLDecoder.decode(kvpStr, SimpleHttpClient.ENCODING_UTF_8)
+                kvpStr = URLDecoder.decode(kvpStr, client.ENCODING_UTF_8.toString())
+                kvpStr = URLDecoder.decode(kvpStr, client.ENCODING_UTF_8.toString())
 
                 val kvpSplits = kvpStr.split("=".toRegex(), 2).toTypedArray()
 
@@ -76,9 +78,8 @@ public class YouTubeVideoInfoRetriever
 
     class SimpleHttpClient {
         val ENCODING_UTF_8 : Charset = Charsets.UTF_8
-        val DEFAULT_TIMEOUT = 10000
-
-        val HTTP_GET = "GET"
+        val DEFAULT_TIMEOUT : Int = 10000
+        val HTTP_GET : String= "GET"
 
         @Throws(IOException::class)
         fun execute(urlStr: String, httpMethod: String, timeout: Int): String {

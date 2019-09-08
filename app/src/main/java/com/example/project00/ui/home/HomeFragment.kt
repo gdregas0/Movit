@@ -44,7 +44,7 @@ class HomeFragment : Fragment(), Player.EventListener {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var simpleExoplayer: SimpleExoPlayer
     private var playbackPosition = 0L
-    private val dashUrl = "http://www.youtube.com/get_video_info?&video_id=mJUvc5sq-VE&el=info&ps=default&eurl=&gl=KR&hl=kr"
+    private val dashUrl = "http://www.youtube.com/get_video_info?&video_id=mJUvc5sq-VE&&el=info&ps=default&eurl=&gl=US&hl=en"
 
     private val bandwidthMeter by lazy {
         DefaultBandwidthMeter()

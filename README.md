@@ -1,4 +1,4 @@
 # Project00
 #Language : Kotlin
 
-#Project00 is android application which convert Youtube link to Media
+#Project00 is android app which is control window using sensorManager

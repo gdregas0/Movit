@@ -1,10 +1,5 @@
 package com.example.project00
 
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,12 +11,9 @@ import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
-class MainActivity : AppCompatActivity(), SensorEventListener{
+class MainActivity : AppCompatActivity(){
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private val sensorMNG by lazy {
-        getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,20 +41,5 @@ class MainActivity : AppCompatActivity(), SensorEventListener{
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        sensorMNG.registerListener(this,
-            sensorMNG.getDefaultSensor(Sensor.TYPE_GYROSCOPE),
-            SensorManager.SENSOR_DELAY_NORMAL)
-    }
-
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onSensorChanged(p0: SensorEvent?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

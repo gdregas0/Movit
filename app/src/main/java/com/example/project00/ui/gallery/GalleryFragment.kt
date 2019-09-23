@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.project00.R
+import kotlin.concurrent.thread
 
 class GalleryFragment : Fragment(), SensorEventListener {
 
@@ -32,6 +33,7 @@ class GalleryFragment : Fragment(), SensorEventListener {
         galleryViewModel =
             ViewModelProviders.of(this).get(GalleryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_gallery, container, false)
+
         val textView: TextView = root.findViewById(R.id.text_gallery)
         galleryViewModel.text.observe(this, Observer {
             textView.text = it
@@ -40,16 +42,12 @@ class GalleryFragment : Fragment(), SensorEventListener {
         return root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     override fun onResume() {
         super.onResume()
         Log.e("Debug", "eyedi onResume")
 
         sensorMNG.registerListener(this,
-            sensorMNG.getDefaultSensor(Sensor.TYPE_GYROSCOPE),
+            sensorMNG.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
             SensorManager.SENSOR_DELAY_NORMAL
         )
     }
@@ -64,6 +62,8 @@ class GalleryFragment : Fragment(), SensorEventListener {
     }
 
     override fun onSensorChanged(p0: SensorEvent?) {
-
+        Log.e("Debug", "x : " + p0!!.values[0]+
+                " y: " + p0!!.values[1]+
+                " z: " + p0!!.values[2])
     }
 }

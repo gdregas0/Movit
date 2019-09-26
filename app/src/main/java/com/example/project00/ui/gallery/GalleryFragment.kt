@@ -6,6 +6,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.PowerManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.project00.R
-import kotlin.concurrent.thread
+
 
 class GalleryFragment : Fragment(), SensorEventListener {
 
     private lateinit var galleryViewModel: GalleryViewModel
+
+    private val pwrMNG : PowerManager by lazy {
+        activity?.getSystemService(Context.POWER_SERVICE) as PowerManager
+    }
 
     private val sensorMNG : SensorManager by lazy {
         activity?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -39,6 +44,7 @@ class GalleryFragment : Fragment(), SensorEventListener {
             textView.text = it
         })
 
+        //val wl:PowerManager.WakeLock = pwrMNG.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP)
         return root
     }
 
@@ -62,8 +68,12 @@ class GalleryFragment : Fragment(), SensorEventListener {
     }
 
     override fun onSensorChanged(p0: SensorEvent?) {
-        Log.e("Debug", "x : " + p0!!.values[0]+
-                " y: " + p0!!.values[1]+
-                " z: " + p0!!.values[2])
+        /* Z-value determine on/off */
+        if(p0!!.values[2] > 5.5){
+            Log.e("Debug", " z: " + p0!!.values[2])
+        } else if(p0!!.values[2] < -5.5) {
+            Log.e("Debug", " z: " + p0!!.values[2])
+        }
+
     }
 }

@@ -19,6 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 2019.09.29 sensor service -->
+        <service android:name=".api.SensorService"/>
+
     </application>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>

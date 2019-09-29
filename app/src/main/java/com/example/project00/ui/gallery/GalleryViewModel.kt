@@ -10,4 +10,23 @@ class GalleryViewModel : ViewModel() {
         value = "This is gallery Fragment"
     }
     val text: LiveData<String> = _text
+
+    var screenFlag : Boolean? = true
+
+    override fun onCleared() {
+        super.onCleared()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+
+    override fun toString(): String {
+        return super.toString()
+    }
+
 }

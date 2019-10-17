@@ -55,7 +55,7 @@ class SensorService : Service(), SensorEventListener {
 
         private fun startService(context: Context, intent: Intent): Boolean {
             // Similar to ContextCompat.startForegroundService(context, intent)
-            val componentName: ComponentName? = if (Build.VERSION.SDK_INT >= 26) {
+            val componentName: ComponentName? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {
                 context.startService(intent)
@@ -79,15 +79,15 @@ class SensorService : Service(), SensorEventListener {
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-    }
+    } /* end of companion obj */
 
     override fun onBind(intent: Intent?): IBinder? {
         throw UnsupportedOperationException ("Not yet")
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
+        Log.d("Debug", "sensor_service unbind sensor_manager")
         sensorMNG.unregisterListener(this)
-
         return super.onUnbind(intent)
     }
 
@@ -103,7 +103,6 @@ class SensorService : Service(), SensorEventListener {
         )
 
         try {
-            Log.d(TAG, "+onStartCommand(...)")
             if (intent != null) {
                 val extras = intent.extras
                 if (extras != null) {
@@ -118,9 +117,10 @@ class SensorService : Service(), SensorEventListener {
                     }
                 }
             }
+
             return START_NOT_STICKY
         } finally {
-            Log.d(TAG, "-onStartCommand(...)")
+            Log.e("Debug", "Fail to foreground service created")
         }
 
         return super.onStartCommand(intent, flags, startId)
@@ -129,7 +129,6 @@ class SensorService : Service(), SensorEventListener {
     override fun onDestroy() {
         Log.i("Debug", "destroyed")
         //PbLog.s(TAG, PbStringUtils.separateCamelCaseWords("onDestroy"));
-        super.onDestroy()
         stopForeground(true)
         super.onDestroy()
     }
@@ -143,7 +142,7 @@ class SensorService : Service(), SensorEventListener {
         if ((event!!.values[2] > 5) &&
             (sensorViewModel.screenFlag == false)
         ) {
-
+            // maybe.. i could make window on/off function at here
             sensorViewModel.screenFlag = true
             Log.d("Debug", " z: " + event!!.values[2])
 

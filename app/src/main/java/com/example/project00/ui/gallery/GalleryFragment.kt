@@ -57,7 +57,8 @@ class GalleryFragment : Fragment() {
             textView.text = it
         })
 
-        if (Build.VERSION.SDK_INT >= 26) {
+        /* more than SDK 26 */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val appName = getString(R.string.app_name)
             val channelName = "$appName channel name"
             val channelImportance = NotificationManager.IMPORTANCE_LOW
@@ -69,7 +70,7 @@ class GalleryFragment : Fragment() {
                 channelImportance,
                 channelDescription)
         }
-        notification = createOngoingNotification(NOTIFICATION_REQUEST_CODE, R.drawable.ic_notification, "Content Text")
+        notification = createOngoingNotification(NOTIFICATION_REQUEST_CODE, R.drawable.ic_notification, "eyedi service")
 
         return root
     }
@@ -77,7 +78,9 @@ class GalleryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.e("Debug", "eyedi onResume start service")
-        val AccelService = context?.startService(Intent(context, SensorService::class.java))
+
+        //eyedi
+        SensorService.showNotification(super.getContext() as Context, NOTIFICATION_REQUEST_CODE, notification)
     }
 
     @RequiresApi(api = 26)
@@ -91,14 +94,14 @@ class GalleryFragment : Fragment() {
         val contentPendingIntent = PendingIntent.getActivity(context, requestCode, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         return Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setOngoing(true)
+            //.setOngoing(TRUE)
             .setSmallIcon(icon)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(text)
             .setContentIntent(contentPendingIntent)
             .build()
     }
-
+    /* foreground service enalbe/disable function */
     fun showNotification(show: Boolean) {
         if (show) {
             SensorService.showNotification(super.getContext() as Context, NOTIFICATION_REQUEST_CODE, notification)

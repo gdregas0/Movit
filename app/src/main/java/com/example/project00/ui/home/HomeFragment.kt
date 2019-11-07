@@ -23,34 +23,72 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment(), Player.EventListener {
+    /*
+        override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
+        }
 
-    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
-    }
+        override fun onTracksChanged(
+            trackGroups: TrackGroupArray?,
+            trackSelections: TrackSelectionArray?
+        ) {
+        }
 
-    override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
-    }
+        override fun onPlayerError(error: ExoPlaybackException?) {
+        }
 
-    override fun onPlayerError(error: ExoPlaybackException?) {
-    }
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            if (playbackState == Player.STATE_BUFFERING)
+                progressBar.visibility = View.VISIBLE
+            else if (playbackState == Player.STATE_READY)
+                progressBar.visibility = View.INVISIBLE
+        }
 
-    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        if (playbackState == Player.STATE_BUFFERING)
-            progressBar.visibility = View.VISIBLE
-        else if (playbackState == Player.STATE_READY)
-            progressBar.visibility = View.INVISIBLE
-    }
+        private lateinit var simpleExoplayer: SimpleExoPlayer
+        private var playbackPosition = 0L
+        private val dashUrl =
+            "http://www.youtube.com/get_video_info?&video_id=mJUvc5sq-VE&&el=info&ps=default&eurl=&gl=US&hl=en"
 
+        private val bandwidthMeter by lazy {
+            DefaultBandwidthMeter()
+        }
+        private val adaptiveTrackSelectionFactory by lazy {
+            AdaptiveTrackSelection.Factory(bandwidthMeter)
+        }
+
+        private fun initializeExoplayer() {
+            simpleExoplayer = ExoPlayerFactory.newSimpleInstance(
+                context,
+                DefaultRenderersFactory(context),
+                DefaultTrackSelector(adaptiveTrackSelectionFactory),
+                DefaultLoadControl()
+            )
+
+            prepareExoplayer()
+
+            exoPlayerView.player = simpleExoplayer
+            simpleExoplayer.seekTo(playbackPosition)
+            simpleExoplayer.playWhenReady = true
+            simpleExoplayer.addListener(this)
+        }
+
+        private fun releaseExoplayer() {
+            playbackPosition = simpleExoplayer.currentPosition
+            simpleExoplayer.release()
+        }
+
+        private fun buildMediaSource(uri: Uri): MediaSource {
+            val dataSourceFactory = DefaultHttpDataSourceFactory("ua", bandwidthMeter)
+            val dashChunkSourceFactory = DefaultDashChunkSource.Factory(dataSourceFactory)
+            return DashMediaSource(uri, dataSourceFactory, dashChunkSourceFactory, null, null)
+        }
+
+        private fun prepareExoplayer() {
+            val uri = Uri.parse(dashUrl)
+            val mediaSource = buildMediaSource(uri)
+            simpleExoplayer.prepare(mediaSource)
+        }
+    */
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var simpleExoplayer: SimpleExoPlayer
-    private var playbackPosition = 0L
-    private val dashUrl = "http://www.youtube.com/get_video_info?&video_id=mJUvc5sq-VE&&el=info&ps=default&eurl=&gl=US&hl=en"
-
-    private val bandwidthMeter by lazy {
-        DefaultBandwidthMeter()
-    }
-    private val adaptiveTrackSelectionFactory by lazy {
-        AdaptiveTrackSelection.Factory(bandwidthMeter)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,45 +105,12 @@ class HomeFragment : Fragment(), Player.EventListener {
     override fun onStart() {
         super.onStart()
 
-        initializeExoplayer()
+        //initializeExoplayer()
     }
 
     override fun onStop() {
 
-        releaseExoplayer()
+        //releaseExoplayer()
         super.onStop()
-    }
-
-    private fun initializeExoplayer() {
-        simpleExoplayer = ExoPlayerFactory.newSimpleInstance(
-            context,
-            DefaultRenderersFactory(context),
-            DefaultTrackSelector(adaptiveTrackSelectionFactory),
-            DefaultLoadControl()
-        )
-
-        prepareExoplayer()
-
-        exoPlayerView.player = simpleExoplayer
-        simpleExoplayer.seekTo(playbackPosition)
-        simpleExoplayer.playWhenReady = true
-        simpleExoplayer.addListener(this)
-    }
-
-    private fun releaseExoplayer() {
-        playbackPosition = simpleExoplayer.currentPosition
-        simpleExoplayer.release()
-    }
-
-    private fun buildMediaSource(uri: Uri): MediaSource {
-        val dataSourceFactory = DefaultHttpDataSourceFactory("ua", bandwidthMeter)
-        val dashChunkSourceFactory = DefaultDashChunkSource.Factory(dataSourceFactory)
-        return DashMediaSource(uri, dataSourceFactory, dashChunkSourceFactory, null, null)
-    }
-
-    private fun prepareExoplayer() {
-        val uri = Uri.parse(dashUrl)
-        val mediaSource = buildMediaSource(uri)
-        simpleExoplayer.prepare(mediaSource)
     }
 }

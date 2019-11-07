@@ -23,19 +23,12 @@ import com.example.project00.api.SensorService
 class GalleryFragment : Fragment() {
 
     private lateinit var galleryViewModel: GalleryViewModel
+    private lateinit var notification: Notification
 
     companion object {
-        private const val TAG = "MainApplication"
-
-        fun getMainApplication(context: Context): GalleryFragment {
-            return context.applicationContext as GalleryFragment
-        }
-
         private const val NOTIFICATION_REQUEST_CODE = 100
         private const val NOTIFICATION_CHANNEL_ID = "notification_channel_id"
     }
-
-    private lateinit var notification: Notification
 
     var isNotificationShowing: Boolean = false
         private set
@@ -47,9 +40,9 @@ class GalleryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         /* View model object created */
-        galleryViewModel =
-            ViewModelProviders.of(this).get(GalleryViewModel::class.java)
+        galleryViewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_gallery, container, false)
 
         val textView: TextView = root.findViewById(R.id.text_gallery)
@@ -70,6 +63,7 @@ class GalleryFragment : Fragment() {
                 channelImportance,
                 channelDescription)
         }
+        /* Device admin 권한 처리가 필요함 */
         notification = createOngoingNotification(NOTIFICATION_REQUEST_CODE, R.drawable.ic_notification, "eyedi service")
 
         return root
@@ -83,6 +77,9 @@ class GalleryFragment : Fragment() {
         SensorService.showNotification(super.getContext() as Context, NOTIFICATION_REQUEST_CODE, notification)
     }
 
+    /* 2019.10.22
+    * Make notification
+    * */
     @RequiresApi(api = 26)
     private fun createOngoingNotification(requestCode: Int, icon: Int, text: String): Notification {
 
@@ -91,17 +88,21 @@ class GalleryFragment : Fragment() {
         val contentIntent = Intent(context, GalleryFragment::class.java)
             .setAction(Intent.ACTION_MAIN)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+
         val contentPendingIntent = PendingIntent.getActivity(context, requestCode, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         return Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
-            //.setOngoing(TRUE)
+            .setOngoing(true)
             .setSmallIcon(icon)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(text)
             .setContentIntent(contentPendingIntent)
             .build()
     }
-    /* foreground service enalbe/disable function */
+
+    /* 2019.10.22
+    * foreground service Enable/Disable function, don't use now...
+    */
     fun showNotification(show: Boolean) {
         if (show) {
             SensorService.showNotification(super.getContext() as Context, NOTIFICATION_REQUEST_CODE, notification)

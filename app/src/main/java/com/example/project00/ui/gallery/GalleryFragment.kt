@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -13,11 +15,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.project00.R
+import com.example.project00.api.DeviceAdmin
 import com.example.project00.api.SensorService
 
 class GalleryFragment : Fragment() {
@@ -25,6 +29,9 @@ class GalleryFragment : Fragment() {
     private lateinit var galleryViewModel: GalleryViewModel
     private lateinit var notification: Notification
 
+    private val devicepolicyMNG: DevicePolicyManager by lazy {
+        activity?.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+    }
     companion object {
         private const val NOTIFICATION_REQUEST_CODE = 100
         private const val NOTIFICATION_CHANNEL_ID = "notification_channel_id"
@@ -45,15 +52,25 @@ class GalleryFragment : Fragment() {
         galleryViewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_gallery, container, false)
 
+        /* Get TextView data from R Object */
         val textView: TextView = root.findViewById(R.id.text_gallery)
         galleryViewModel.text.observe(this, Observer {
             textView.text = it
         })
+        val adminComponent = ComponentName(super.getContext() as Context, DeviceAdmin::class.java)
+        /* Device admin 권한 처리가 필요함 */
+        if(!devicepolicyMNG.isAdminActive(adminComponent)){
+            val tempIntent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+            tempIntent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
+            tempIntent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "eyedi explanation")
+            startActivityForResult(tempIntent, 1)
+        } else
+            Toast.makeText(super.getContext() as Context, "device admin permission already get", Toast.LENGTH_LONG).show()
 
         /* more than SDK 26 */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val appName = getString(R.string.app_name)
-            val channelName = "$appName channel name"
+            val channelName = "$appName default channel"
             val channelImportance = NotificationManager.IMPORTANCE_LOW
             val channelDescription = "$appName channel description"
 
@@ -63,7 +80,6 @@ class GalleryFragment : Fragment() {
                 channelImportance,
                 channelDescription)
         }
-        /* Device admin 권한 처리가 필요함 */
         notification = createOngoingNotification(NOTIFICATION_REQUEST_CODE, R.drawable.ic_notification, "eyedi service")
 
         return root
@@ -73,7 +89,7 @@ class GalleryFragment : Fragment() {
         super.onResume()
         Log.e("Debug", "eyedi onResume start service")
 
-        //eyedi
+        /* Start sensorService */
         SensorService.showNotification(super.getContext() as Context, NOTIFICATION_REQUEST_CODE, notification)
     }
 

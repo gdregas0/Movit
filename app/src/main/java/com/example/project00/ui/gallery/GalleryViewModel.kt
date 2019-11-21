@@ -1,5 +1,6 @@
 package com.example.project00.ui.gallery
 
+import android.app.admin.DevicePolicyManager
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,20 +14,5 @@ class GalleryViewModel : ViewModel() {
     val text: LiveData<String> = _text
     var screenFlag : Boolean? = true
 
-    override fun onCleared() {
-        super.onCleared()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        return super.equals(other)
-    }
-
-    override fun hashCode(): Int {
-        return super.hashCode()
-    }
-
-    override fun toString(): String {
-        return super.toString()
-    }
 
 }

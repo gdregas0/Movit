@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -14,6 +15,7 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
+import android.os.PowerManager
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
@@ -22,10 +24,19 @@ import com.example.project00.ui.gallery.GalleryViewModel
 
 class SensorService : Service(), SensorEventListener {
     private lateinit var sensorViewModel: GalleryViewModel
+    private lateinit var wlock : PowerManager.WakeLock
 
     private val sensorMNG: SensorManager by lazy {
         Log.i("Info", "initialize sensor manager")
         getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+
+    private val devicepolicyMNG: DevicePolicyManager by lazy {
+        getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+    }
+
+    private val powerMNG : PowerManager by lazy {
+        getSystemService(Context.POWER_SERVICE) as PowerManager
     }
 
     /* companion object same as static */
@@ -109,6 +120,11 @@ class SensorService : Service(), SensorEventListener {
             SensorManager.SENSOR_DELAY_NORMAL
         )
 
+        wlock = powerMNG.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP
+                or PowerManager.ON_AFTER_RELEASE
+                or PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+            , "project00:wlockTag")
+
         try {
             if (intent == null) {
                 Log.d("Debug", "intent is null")
@@ -156,11 +172,14 @@ class SensorService : Service(), SensorEventListener {
         if ((event!!.values[2] > 5) && (sensorViewModel.screenFlag == false)
         ) {
             sensorViewModel.screenFlag = true
+            wlock.acquire()
+            wlock.release()
             Log.d("Debug", "screen on z: " + event.values[2])
 
         } else if ((event.values[2] < -5) && (sensorViewModel.screenFlag == true)
         ) {
             sensorViewModel.screenFlag = false
+            devicepolicyMNG.lockNow()
             Log.d("Debug", "screen off z: " + event.values[2])
         }
     }

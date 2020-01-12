@@ -8,7 +8,7 @@
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_sensor" />
-
+<!--
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
@@ -22,8 +22,9 @@
             android:id="@+id/nav_tools"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_tools" />
+-->
     </group>
-
+<!--
     <item android:title="Communicate">
         <menu>
             <item
@@ -36,5 +37,5 @@
                 android:title="@string/menu_send" />
         </menu>
     </item>
-
+-->
 </menu>

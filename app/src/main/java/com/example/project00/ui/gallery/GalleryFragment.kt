@@ -58,7 +58,8 @@ class GalleryFragment : Fragment() {
             textView.text = it
         })
         val adminComponent = ComponentName(super.getContext() as Context, DeviceAdmin::class.java)
-        /* Device admin 권한 처리가 필요함 */
+
+        /* check to device admin permission */
         if(!devicepolicyMNG.isAdminActive(adminComponent)){
             val tempIntent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
             tempIntent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
@@ -67,7 +68,7 @@ class GalleryFragment : Fragment() {
         } else
             Toast.makeText(super.getContext() as Context, "device admin permission already get", Toast.LENGTH_LONG).show()
 
-        /* more than SDK 26 */
+        /* more than SDK 26 (Oreo) */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val appName = getString(R.string.app_name)
             val channelName = "$appName default channel"
@@ -113,12 +114,12 @@ class GalleryFragment : Fragment() {
             .setContentTitle(getString(R.string.app_name))
             .setContentText(text)
             .setContentIntent(contentPendingIntent)
+            .addAction(R.drawable.ic_menu_share, "end", contentPendingIntent)
             .build()
     }
+    /* is it alright? */
 
-    /* 2019.10.22
-    * foreground service Enable/Disable function, don't use now...
-    */
+    @SuppressLint("UnusedResource")
     fun showNotification(show: Boolean) {
         if (show) {
             SensorService.showNotification(super.getContext() as Context, NOTIFICATION_REQUEST_CODE, notification)

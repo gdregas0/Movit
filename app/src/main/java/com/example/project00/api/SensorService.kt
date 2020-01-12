@@ -99,6 +99,7 @@ class SensorService : Service(), SensorEventListener {
 
     } /* end of companion obj */
 
+
     override fun onBind(intent: Intent?): IBinder? {
         throw UnsupportedOperationException("[eyedi] Not yet...")
     }
@@ -116,14 +117,14 @@ class SensorService : Service(), SensorEventListener {
 
         sensorMNG.registerListener(
             this,
-            sensorMNG.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            sensorMNG.getDefaultSensor(Sensor.TYPE_PROXIMITY),
             SensorManager.SENSOR_DELAY_NORMAL
         )
 
         wlock = powerMNG.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP
                 or PowerManager.ON_AFTER_RELEASE
                 or PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-            , "project00:wlockTag")
+            , "project00:wakelockTag")
 
         try {
             if (intent == null) {
@@ -165,6 +166,7 @@ class SensorService : Service(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
 
+        Log.d("debug", "cm : " + event!!.values[0])
         /* Z-value determine on/off
         * value > 5  : Screen On
         * value < -5 : Screen Off
@@ -172,7 +174,7 @@ class SensorService : Service(), SensorEventListener {
         if ((event!!.values[2] > 5) && (sensorViewModel.screenFlag == false)
         ) {
             sensorViewModel.screenFlag = true
-            wlock.acquire()
+            wlock.acquire(50)
             wlock.release()
             Log.d("Debug", "screen on z: " + event.values[2])
 

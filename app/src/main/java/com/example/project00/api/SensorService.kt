@@ -172,14 +172,14 @@ class SensorService : Service(), SensorEventListener {
         if ((event!!.values[2] > 5) && (sensorViewModel.screenFlag == false)
         ) {
             sensorViewModel.screenFlag = true
-            wlock.acquire(50)
-            wlock.release()
+            //wlock.acquire(50)
+            //wlock.release()
             Log.d("Debug", "screen on z: " + event.values[2])
 
         } else if ((event.values[2] < -5) && (sensorViewModel.screenFlag == true)
         ) {
             sensorViewModel.screenFlag = false
-            devicepolicyMNG.lockNow()
+            //devicepolicyMNG.lockNow()
             Log.d("Debug", "screen off z: " + event.values[2])
         }
     }

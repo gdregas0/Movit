@@ -117,7 +117,7 @@ class SensorService : Service(), SensorEventListener {
 
         sensorMNG.registerListener(
             this,
-            sensorMNG.getDefaultSensor(Sensor.TYPE_PROXIMITY),
+            sensorMNG.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
             SensorManager.SENSOR_DELAY_NORMAL
         )
 
@@ -165,8 +165,6 @@ class SensorService : Service(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-
-        Log.d("debug", "cm : " + event!!.values[0])
         /* Z-value determine on/off
         * value > 5  : Screen On
         * value < -5 : Screen Off

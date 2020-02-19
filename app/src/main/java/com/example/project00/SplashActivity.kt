@@ -10,7 +10,7 @@ class SplashActivity : Activity(){
         super.onCreate(savedInstanceState)
 
         try {
-            Thread.sleep(2000)
+            Thread.sleep(1000)
         }finally {
 
         }
